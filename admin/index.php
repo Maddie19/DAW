@@ -1,151 +1,95 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php"); // Redirecționează la login dacă utilizatorul nu este autentificat
-    exit();
-}
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!-- Important to make website responsive -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php include('partials/menu.php'); ?>
 
-    <title>Restaurant Website</title>
+        <!-- Main Content Section Starts -->
+        <div class="main-content">
+            <div class="wrapper">
+                <h1>Dashboard</h1>
+                <br><br>
+                <?php 
+                    if(isset($_SESSION['login']))
+                    {
+                        echo $_SESSION['login'];
+                        unset($_SESSION['login']);
+                    }
+                ?>
+                <br><br>
 
-    <!-- Link our CSS file -->
-    <link rel="stylesheet" href="css/style.css">
-</head>
+                <div class="col-4 text-center">
 
-<body>
-    <!-- Navbar Section Starts Here -->
-    <section class="navbar">
-        <div class="container">
-            <div class="logo">
-                <a href="#" title="Logo">
-                    <img src="images/logo.png" alt="Restaurant Logo" class="img-responsive">
-                </a>
+                    <?php 
+                        //Sql Query 
+                        $sql = "SELECT * FROM tbl_category";
+                        //Execute Query
+                        $res = mysqli_query($conn, $sql);
+                        //Count Rows
+                        $count = mysqli_num_rows($res);
+                    ?>
+
+                    <h1><?php echo $count; ?></h1>
+                    <br />
+                    Categories
+                </div>
+
+                <div class="col-4 text-center">
+
+                    <?php 
+                        //Sql Query 
+                        $sql2 = "SELECT * FROM tbl_food";
+                        //Execute Query
+                        $res2 = mysqli_query($conn, $sql2);
+                        //Count Rows
+                        $count2 = mysqli_num_rows($res2);
+                    ?>
+
+                    <h1><?php echo $count2; ?></h1>
+                    <br />
+                    Foods
+                </div>
+
+                <div class="col-4 text-center">
+                    
+                    <?php 
+                        //Sql Query 
+                        $sql3 = "SELECT * FROM tbl_order";
+                        //Execute Query
+                        $res3 = mysqli_query($conn, $sql3);
+                        //Count Rows
+                        $count3 = mysqli_num_rows($res3);
+                    ?>
+
+                    <h1><?php echo $count3; ?></h1>
+                    <br />
+                    Total Orders
+                </div>
+
+                <div class="col-4 text-center">
+                    
+                    <?php 
+                        //Creat SQL Query to Get Total Revenue Generated
+                        //Aggregate Function in SQL
+                        $sql4 = "SELECT SUM(total) AS Total FROM tbl_order WHERE status='Delivered'";
+
+                        //Execute the Query
+                        $res4 = mysqli_query($conn, $sql4);
+
+                        //Get the VAlue
+                        $row4 = mysqli_fetch_assoc($res4);
+                        
+                        //GEt the Total REvenue
+                        $total_revenue = $row4['Total'];
+
+                    ?>
+
+                    <h1>$<?php echo $total_revenue; ?></h1>
+                    <br />
+                    Revenue Generated
+                </div>
+
+                <div class="clearfix"></div>
+
             </div>
-
-            <div class="menu text-right">
-                <ul>
-                    <li>
-                        <a href="index.php">Home</a>
-                    </li>
-                    <li>
-                        <a href="categories.html">Categories</a>
-                    </li>
-                    <li>
-                        <a href="foods.html">Foods</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
-                    <li>
-                        <a href="logout.php">Logout</a> <!-- Buton de logout -->
-                    </li>
-                </ul>
-            </div>
-
-            <div class="clearfix"></div>
         </div>
-    </section>
-    <!-- Navbar Section Ends Here -->
+        <!-- Main Content Setion Ends -->
 
-    <!-- fOOD SEARCH Section Starts Here -->
-    <section class="food-search text-center">
-        <div class="container">
-            <form action="food-search.html" method="POST">
-                <input type="search" name="search" placeholder="Search for Food.." required>
-                <input type="submit" name="submit" value="Search" class="btn btn-primary">
-            </form>
-        </div>
-    </section>
-    <!-- fOOD SEARCH Section Ends Here -->
-
-    <!-- CAtegories Section Starts Here -->
-    <section class="categories">
-        <div class="container">
-            <h2 class="text-center">Explore Foods</h2>
-
-            <a href="category-foods.html">
-                <div class="box-3 float-container">
-                    <img src="images/pizza.jpg" alt="Pizza" class="img-responsive img-curve">
-                    <h3 class="float-text text-white">Pizza</h3>
-                </div>
-            </a>
-
-            <a href="#">
-                <div class="box-3 float-container">
-                    <img src="images/burger.jpg" alt="Burger" class="img-responsive img-curve">
-                    <h3 class="float-text text-white">Burger</h3>
-                </div>
-            </a>
-
-            <a href="#">
-                <div class="box-3 float-container">
-                    <img src="images/momo.jpg" alt="Momo" class="img-responsive img-curve">
-                    <h3 class="float-text text-white">Momo</h3>
-                </div>
-            </a>
-
-            <div class="clearfix"></div>
-        </div>
-    </section>
-    <!-- Categories Section Ends Here -->
-
-    <!-- FOOD MENU Section Starts Here -->
-    <section class="food-menu">
-        <div class="container">
-            <h2 class="text-center">Food Menu</h2>
-
-            <div class="food-menu-box">
-                <div class="food-menu-img">
-                    <img src="images/menu-pizza.jpg" alt="Chicken Hawaiian Pizza" class="img-responsive img-curve">
-                </div>
-                <div class="food-menu-desc">
-                    <h4>Food Title</h4>
-                    <p class="food-price">$2.3</p>
-                    <p class="food-detail">
-                        Made with Italian Sauce, Chicken, and organic vegetables.
-                    </p>
-                    <br>
-                    <a href="order.html" class="btn btn-primary">Order Now</a>
-                </div>
-            </div>
-
-            <div class="clearfix"></div>
-        </div>
-    </section>
-    <!-- FOOD MENU Section Ends Here -->
-
-    <!-- social Section Starts Here -->
-    <section class="social">
-        <div class="container text-center">
-            <ul>
-                <li>
-                    <a href="#"><img src="https://img.icons8.com/fluent/50/000000/facebook-new.png"/></a>
-                </li>
-                <li>
-                    <a href="#"><img src="https://img.icons8.com/fluent/48/000000/instagram-new.png"/></a>
-                </li>
-                <li>
-                    <a href="#"><img src="https://img.icons8.com/fluent/48/000000/twitter.png"/></a>
-                </li>
-            </ul>
-        </div>
-    </section>
-    <!-- social Section Ends Here -->
-
-    <!-- footer Section Starts Here -->
-    <section class="footer">
-        <div class="container text-center">
-            <p>All rights reserved. Designed By <a href="#">Madalina Miron</a></p>
-        </div>
-    </section>
-    <!-- footer Section Ends Here -->
-
-</body>
-</html>
+<?php include('partials/footer.php') ?>
